@@ -7,7 +7,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/new',component: NewConnect,
+    path: '/',component: NewConnect,
   }
 ]
 

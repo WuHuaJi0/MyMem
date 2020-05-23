@@ -47,7 +47,13 @@ class MemTool {
                     //todo should use foreach to get all slab id;
                     let slabid = parseInt(Object.keys(data[0])[0])
                     that.client.cachedump(`${that.host}:${that.port}`,slabid,0,function (err,data) {
-                        resolve(data.map(item => item.key));
+                        if (data instanceof Array){
+                            resolve(data.map(item => item.key));
+                        }else if (data instanceof Object){
+                            resolve([data.key]);
+                        }else{
+                            resolve([]);
+                        }
                     })
                 }
             })

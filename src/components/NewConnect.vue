@@ -24,6 +24,8 @@
 </template>
 
 <script>
+
+    import { Cache } from "../tools/Cache"
     export default {
         name: "NewConnect",
         data() {
@@ -34,9 +36,20 @@
                 }
             }
         },
+        mounted() {
+        },
         methods: {
-            onSubmit() {
-                console.log('submit!');
+            async onSubmit() {
+                const mainProcess = remote.require("./electron-main.js").main;
+
+                try {
+                    let result = await mainProcess.connect(this.connect.host, this.connect.port);
+                    Cache.set("keys",result);
+                    //navigate to home page;
+                } catch (err) {
+                    //todo: alert the error message
+                    console.log(err)
+                }
             }
         }
     }
