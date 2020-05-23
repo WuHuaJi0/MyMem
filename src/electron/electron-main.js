@@ -1,5 +1,5 @@
 const {app, BrowserWindow} = require("electron");
-let MemTool = require("./MemTool").MemTool;
+let MemTool = require("../tools/MemTool").MemTool;
 
 let ElectronMain = {
 
@@ -25,9 +25,12 @@ let ElectronMain = {
     connect(host, port) {
         this.memcache = new MemTool(host, port);
         return this.memcache.keys();
-        // let data = await memcache.keys()
-        // this.newWindow.webContents.send("keys", data);
-        // return data;
+    },
+
+    get(key){
+       //todo: change the hard code value to variable.
+       this.memcache = new MemTool("127.0.0.1","11211") ;
+       return this.memcache.get(key);
     }
 }
 

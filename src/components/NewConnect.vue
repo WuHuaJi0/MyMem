@@ -17,7 +17,6 @@
                         <el-button type="primary" @click="onSubmit">Connect</el-button>
                     </el-form-item>
                 </el-form>
-
             </el-main>
         </el-container>
     </div>
@@ -26,6 +25,8 @@
 <script>
 
     import { Cache } from "../tools/Cache"
+    const mainProcess = remote.require("./electron-main.js").main;
+
     export default {
         name: "NewConnect",
         data() {
@@ -40,12 +41,11 @@
         },
         methods: {
             async onSubmit() {
-                const mainProcess = remote.require("./electron-main.js").main;
 
                 try {
                     let result = await mainProcess.connect(this.connect.host, this.connect.port);
                     Cache.set("keys",result);
-                    //navigate to home page;
+                    this.$router.push("/home");
                 } catch (err) {
                     //todo: alert the error message
                     console.log(err)

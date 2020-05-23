@@ -1,9 +1,10 @@
 let Cache = {
     get(key){
-        let memcache = window.localStorage.getItem("key");
-        if (memcache){
-            return JSON.parse(key)
+        let result = window.localStorage.getItem(key);
+        if (result){
+            return JSON.parse(result)
         }
+        return "";
     },
 
     set(key,value){
