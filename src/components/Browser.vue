@@ -2,7 +2,11 @@
     <div>
         <el-container>
             <el-aside width="200px">
-                <p><i class="el-icon-s-promotion"></i>Keys</p>
+                <p><i class="el-icon-s-promotion"></i>Keys <i class="el-icon-circle-plus" @click="add"></i></p>
+                <el-row type="flex" v-show="showAddNewKey">
+                    <el-input v-model="newKey" placeholder="请输入内容" size="small"></el-input>
+                    <el-button size="small" @click="addNewKey">Confirm</el-button>
+                </el-row>
                 <p v-for="key in keys" v-text="key" @click="getValue(key)"></p>
             </el-aside>
 
@@ -15,7 +19,8 @@
                 </el-input>
 
                 <el-row>
-                    <el-button size="small" @click="saveChange" :disabled="originValue == currentValue">Save Change</el-button>
+                    <el-button size="small" @click="saveChange" :disabled="originValue == currentValue">Save Change
+                    </el-button>
                 </el-row>
 
             </el-main>
@@ -25,30 +30,48 @@
 
 <script>
     import {Cache} from "../tools/Cache";
+
     const mainProcess = remote.require("./electron-main.js").main;
     export default {
         name: "Browser",
         mounted() {
         },
-        data(){
+        data() {
             return {
                 keys: Cache.get("keys"),
                 originValue: "",
                 currentValue: "",
                 currentKey: "",
+                newKey: "",
+                showAddNewKey: false,
             }
         },
         methods: {
-            async getValue(key){
+            addNewKey() {
+                if (!this.newKey) {
+                    this.$message({
+                        type: "error",
+                        message: "Please enter the key."
+                    });
+                    return ;
+                }
+                mainProcess.set(this.newKey,"",10000)
+                this.keys.push(this.newKey);
+                this.newKey = "";
+            },
+            add() {
+                this.showAddNewKey = true;
+            },
+            async getValue(key) {
                 this.currentKey = key;
                 try {
                     this.currentValue = this.originValue = await mainProcess.get(key)
-                }catch(err){
+                } catch (err) {
                     //todo: show the err message.
                     console.log(err);
                 }
             },
-            async saveChange(){
+            async saveChange() {
                 try {
                     await mainProcess.set(this.currentKey, this.currentValue, 10000)
                     this.$message({
@@ -73,7 +96,8 @@
         background: #eee;
         padding: 10px;
     }
-    .connect-form{
+
+    .connect-form {
         width: 500px;
         margin: 200px auto 0;
         padding: 20px;
@@ -81,7 +105,7 @@
         background: #eeeeee;
     }
 
-    .el-row{
+    .el-row {
         margin-top: 15px;
     }
 </style>
