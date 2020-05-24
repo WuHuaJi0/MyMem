@@ -1,5 +1,9 @@
 const {app, BrowserWindow} = require("electron");
 let MemTool = require("../tools/MemTool").MemTool;
+const {Cache} = require("../tools/Cache");
+
+// The global Memcache Instance.
+let MemcacheInstance = null;
 
 let ElectronMain = {
 
@@ -23,14 +27,13 @@ let ElectronMain = {
     },
 
     connect(host, port) {
-        this.memcache = new MemTool(host, port);
-        return this.memcache.keys();
+        MemcacheInstance = new MemTool(host, port);
+        //todo: store the host, port
+        return MemcacheInstance.keys();
     },
 
     get(key){
-       //todo: change the hard code value to variable.
-       this.memcache = new MemTool("127.0.0.1","11211") ;
-       return this.memcache.get(key);
+        return MemcacheInstance.get(key);
     }
 }
 
