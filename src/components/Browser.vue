@@ -5,13 +5,19 @@
                 <p><i class="el-icon-s-promotion"></i>Keys</p>
                 <p v-for="key in keys" v-text="key" @click="getValue(key)"></p>
             </el-aside>
+
             <el-main>
                 <el-input
                         type="textarea"
                         autosize
                         placeholder="Please fill your content."
-                        v-model="value">
+                        v-model="currentValue">
                 </el-input>
+
+                <el-row>
+                    <el-button size="small" @click="saveChange" :disabled="originValue == currentValue">Save Change</el-button>
+                </el-row>
+
             </el-main>
         </el-container>
     </div>
@@ -23,22 +29,35 @@
     export default {
         name: "Browser",
         mounted() {
-            console.log(Cache.get("keys"));
-            console.log(this.keys);
         },
         data(){
             return {
                 keys: Cache.get("keys"),
-                value: "",
+                originValue: "",
+                currentValue: "",
+                currentKey: "",
             }
         },
         methods: {
             async getValue(key){
+                this.currentKey = key;
                 try {
-                    this.value = await mainProcess.get(key)
+                    this.currentValue = this.originValue = await mainProcess.get(key)
                 }catch(err){
                     //todo: show the err message.
                     console.log(err);
+                }
+            },
+            async saveChange(){
+                try {
+                    await mainProcess.set(this.currentKey, this.currentValue, 10000)
+                    this.$message({
+                        message: 'Change Saved!',
+                        type: 'success'
+                    });
+                    this.originValue = this.currentValue;
+                } catch (e) {
+                    //todo: show the error message.
                 }
             }
         }
@@ -61,7 +80,8 @@
         box-sizing: border-box;
         background: #eeeeee;
     }
-    .el-textarea__inner{
-        border: none;
+
+    .el-row{
+        margin-top: 15px;
     }
 </style>

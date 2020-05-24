@@ -34,6 +34,10 @@ let ElectronMain = {
 
     get(key){
         return MemcacheInstance.get(key);
+    },
+
+    set(key,value,expiration = 1000){
+       return MemcacheInstance.set(key,value,expiration);
     }
 }
 
