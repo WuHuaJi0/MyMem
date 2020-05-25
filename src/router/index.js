@@ -11,7 +11,7 @@ const routes = [
     path: '/',component: Connect,
   },
   {
-    path: '/home',component: Browser,
+    path: '/browser',component: Browser,
   }
 ]
 

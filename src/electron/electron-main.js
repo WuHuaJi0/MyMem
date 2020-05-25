@@ -28,6 +28,9 @@ let ElectronMain = {
 
     connect(host, port) {
         MemcacheInstance = new MemTool(host, port);
+    },
+
+    keys(){
         return MemcacheInstance.keys();
     },
 
@@ -43,4 +46,3 @@ let ElectronMain = {
 ElectronMain.init();
 
 exports.main = ElectronMain;
-

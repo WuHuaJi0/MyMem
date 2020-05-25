@@ -31,8 +31,7 @@
                         <el-input v-model="connect.name"></el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="onSubmit">Connect</el-button>
-
+                        <el-button @click="connectServer">Connect</el-button>
                         <el-button v-show="isQuickConnect" @click="addToFavorites">Add to Favorites</el-button>
                         <el-button v-show="!isQuickConnect" @click="saveChanges">Save Changes</el-button>
                     </el-form-item>
@@ -108,12 +107,12 @@
                     message: "Add to Favorites!"
                 })
             },
-            async onSubmit() {
+            async connectServer() {
                 this.connectLoading = true
                 try {
-                    let result = await mainProcess.connect(this.connect.host, this.connect.port);
-                    Cache.set("keys", result);
-                    this.$router.push("/home");
+                    await mainProcess.connect(this.connect.host, this.connect.port);
+                    await mainProcess.keys();
+                    this.$router.push("/browser");
                 } catch (err) {
                     this.connectLoading = false;
                     this.$message({

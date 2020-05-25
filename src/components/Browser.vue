@@ -2,9 +2,10 @@
     <div>
         <el-container>
             <el-aside width="200px">
-                <p><i class="el-icon-s-promotion"></i>Keys <i class="el-icon-circle-plus" @click="add"></i></p>
+                <p><i class="el-icon-s-promotion"></i>Keys <i class="el-icon-circle-plus" @click="toggleShowAdd"></i>
+                </p>
                 <el-row type="flex" v-show="showAddNewKey">
-                    <el-input v-model="newKey" placeholder="请输入内容" size="small"></el-input>
+                    <el-input v-model="newKey" placeholder="Enter key." size="small"></el-input>
                     <el-button size="small" @click="addNewKey">Confirm</el-button>
                 </el-row>
                 <p v-for="key in keys" v-text="key" @click="getValue(key)"></p>
@@ -38,12 +39,23 @@
         },
         data() {
             return {
-                keys: Cache.get("keys"),
+                keys: [],
                 originValue: "",
                 currentValue: "",
                 currentKey: "",
                 newKey: "",
                 showAddNewKey: false,
+            }
+        },
+        async mounted() {
+            try {
+                this.keys = await mainProcess.keys();
+            } catch (e) {
+                this.$message.error("Connect error");
+                let that = this;
+                setTimeout(function () {
+                    that.$router.push("/");
+                },1500)
             }
         },
         methods: {
@@ -53,14 +65,14 @@
                         type: "error",
                         message: "Please enter the key."
                     });
-                    return ;
+                    return;
                 }
-                mainProcess.set(this.newKey,"",10000)
+                mainProcess.set(this.newKey, "", 10000)
                 this.keys.push(this.newKey);
                 this.newKey = "";
             },
-            add() {
-                this.showAddNewKey = true;
+            toggleShowAdd() {
+                this.showAddNewKey = !this.showAddNewKey;
             },
             async getValue(key) {
                 this.currentKey = key;
