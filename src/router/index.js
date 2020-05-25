@@ -1,14 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import NewConnect from "../components/NewConnect";
+import Connect from "../components/Connect";
 import Browser from "../components/Browser";
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',component: NewConnect,
+    path: '/',component: Connect,
   },
   {
     path: '/home',component: Browser,
