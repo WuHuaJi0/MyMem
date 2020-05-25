@@ -130,13 +130,22 @@
         background: #eee;
         color: #666;
     }
+    .el-main{
+        position: relative;
+    }
 
     .connect-form {
         width: 500px;
-        margin: 200px auto 0;
         padding: 20px;
         box-sizing: border-box;
         background: #eeeeee;
+        height: 268px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto;
     }
     .connection{
         cursor: pointer;
