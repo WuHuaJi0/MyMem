@@ -28,7 +28,6 @@ let ElectronMain = {
 
     connect(host, port) {
         MemcacheInstance = new MemTool(host, port);
-        //todo: store the host, port
         return MemcacheInstance.keys();
     },
 

@@ -19,7 +19,7 @@
                     </el-col>
                 </el-row>
             </el-aside>
-            <el-main>
+            <el-main v-loading="connectLoading">
                 <el-form ref="form" :model="connect" label-width="80px" class="connect-form">
                     <el-form-item label="host">
                         <el-input v-model="connect.host"></el-input>
@@ -50,6 +50,7 @@
         name: "Connect",
         data() {
             return {
+                connectLoading: false,
                 isQuickConnect: true,
                 connect: {
                     host: '127.0.0.1',
@@ -108,13 +109,17 @@
                 })
             },
             async onSubmit() {
+                this.connectLoading = true
                 try {
                     let result = await mainProcess.connect(this.connect.host, this.connect.port);
                     Cache.set("keys", result);
                     this.$router.push("/home");
                 } catch (err) {
-                    //todo: alert the error message
-                    console.log(err)
+                    this.connectLoading = false;
+                    this.$message({
+                        type: "error",
+                        message: "Connect error",
+                    })
                 }
             }
         }
