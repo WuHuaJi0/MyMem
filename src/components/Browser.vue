@@ -151,17 +151,4 @@
     .plainArea i{
         margin-right: 10px;
     }
-    .el-container {
-        height: 100vh;
-    }
-
-    .el-main{
-        position: relative;
-    }
-    .el-aside {
-        background: #eee;
-    }
-    .el-row {
-        /*margin-top: 15px;*/
-    }
 </style>

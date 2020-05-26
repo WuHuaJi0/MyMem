@@ -126,17 +126,6 @@
 </script>
 
 <style scoped>
-    .el-container {
-        height: 100vh;
-    }
-
-    .el-aside {
-        background: #eee;
-        color: #666;
-    }
-    .el-main{
-        position: relative;
-    }
 
     .connect-form {
         width: 500px;
