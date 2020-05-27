@@ -1,6 +1,5 @@
 const {app, BrowserWindow} = require("electron");
 let MemTool = require("../tools/MemTool").MemTool;
-const {Cache} = require("../tools/Cache");
 
 // The global Memcache Instance.
 let MemcacheInstance = null;

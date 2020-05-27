@@ -1,19 +1,23 @@
 <template>
     <div>
         <el-container>
-            <el-aside width="200px">
+            <el-aside width="200px" v-loading="refreshKeysLoading" element-loading-text="Refresh Keys">
                 <div class="keysTitle">
                     <div>
                         <i class="el-icon-s-promotion"></i>Keys
                     </div>
-                    <el-button icon="el-icon-plus" size="mini" @click="toggleShowAdd"></el-button>
+                    <div>
+                        <el-button icon="el-icon-plus" size="mini" @click="toggleShowAdd"></el-button>
+                        <el-button icon="el-icon-refresh-left" size="mini" @click="refreshKeys"></el-button>
+                    </div>
                 </div>
                 <el-row type="flex" v-show="showAddNewKey">
                     <el-input v-model="newKey" placeholder="Enter key." size="small"></el-input>
                     <el-button size="small" @click="addNewKey">Confirm</el-button>
                 </el-row>
                 <div class="keyItemContainer">
-                    <p class="keyItem" v-for="(key,index) in keys" @click="getValue(key,index)" :class="{ current : index == currentEditKey } ">
+                    <p class="keyItem" v-for="(key,index) in keys" @click="getValue(key,index)"
+                       :class="{ current : index == currentEditKey } ">
                         <i class="el-icon-info"></i> {{ key }}
                     </p>
                 </div>
@@ -33,22 +37,20 @@
                     </el-row>
                 </div>
                 <div class="plainArea" v-show="!showEditArea">
-                    <i class="el-icon-message-solid"></i>Select key in left panel.</div>
+                    <i class="el-icon-message-solid"></i>Select key in left panel.
+                </div>
             </el-main>
         </el-container>
     </div>
 </template>
 
 <script>
-    import {Cache} from "../tools/Cache";
-
     const mainProcess = remote.require("./electron-main.js").main;
     export default {
         name: "Browser",
-        mounted() {
-        },
         data() {
             return {
+                refreshKeysLoading: false,
                 keys: [],
                 showEditArea: false,
                 originValue: "",
@@ -61,7 +63,7 @@
         },
         async mounted() {
             try {
-                this.keys =  await mainProcess.keys();
+                this.keys = await mainProcess.keys();
             } catch (e) {
                 this.$message.error("Connect error");
                 let that = this;
@@ -71,6 +73,20 @@
             }
         },
         methods: {
+            async refreshKeys() {
+                this.refreshKeysLoading = true;
+                try {
+                    this.keys = await mainProcess.keys();
+                    setTimeout(() => this.refreshKeysLoading = false,500)
+                } catch (e) {
+                    console.log(e)
+                    this.$message.error("Connect error");
+                    let that = this;
+                    setTimeout(function () {
+                        that.$router.push("/");
+                    }, 1500)
+                }
+            },
             addNewKey() {
                 if (!this.newKey) {
                     this.$message({
@@ -88,7 +104,7 @@
                 this.currentEditKey = null;
                 this.showEditArea = false;
             },
-            async getValue(key,index) {
+            async getValue(key, index) {
                 this.showEditArea = true;
                 this.currentKey = key;
                 this.currentEditKey = index;
@@ -116,26 +132,30 @@
 </script>
 
 <style scoped>
-    .keysTitle{
+    .keysTitle {
         display: flex;
         align-items: center;
         justify-content: space-between;
         color: #666666;
         padding: 10px;
     }
-    .keyItemContainer{
+
+    .keyItemContainer {
         margin-top: 10px;
     }
-    .keyItem{
+
+    .keyItem {
         color: #666;
         padding: 5px 10px;
         cursor: pointer;
     }
-    .keyItem.current{
+
+    .keyItem.current {
         background: #999;
         color: #fff;
     }
-    .plainArea{
+
+    .plainArea {
         position: absolute;
         margin: auto;
         left: 0;
@@ -148,7 +168,8 @@
         justify-content: center;
         font-size: 25px;
     }
-    .plainArea i{
+
+    .plainArea i {
         margin-right: 10px;
     }
 </style>
