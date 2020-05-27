@@ -11,10 +11,6 @@
                         <el-button icon="el-icon-refresh-left" size="mini" @click="refreshKeys"></el-button>
                     </div>
                 </div>
-                <el-row type="flex" v-show="showAddNewKey">
-                    <el-input v-model="newKey" placeholder="Enter key." size="small"></el-input>
-                    <el-button size="small" @click="addNewKey">Confirm</el-button>
-                </el-row>
                 <div class="keyItemContainer">
                     <p class="keyItem" v-for="(key,index) in keys" @click="getValue(key,index)"
                        :class="{ current : index == currentEditKey } ">
@@ -24,6 +20,21 @@
             </el-aside>
 
             <el-main>
+                <el-dialog title="Add new key" :visible.sync="showAddNewKey" width="30%">
+                    <el-form ref="form" :model="newKey" label-width="80px">
+                        <el-form-item label="name">
+                            <el-input v-model="newKey.name" placeholder="your-key-name"></el-input>
+                        </el-form-item>
+                        <el-form-item label="expiration">
+                            <el-input v-model="newKey.expiration" type="number"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="showAddNewKey = false">Cancel</el-button>
+                        <el-button type="primary" @click="addNewKey">Confirm</el-button>
+                    </span>
+                </el-dialog>
+
                 <div class="editArea" v-show="showEditArea">
                     <el-input
                             type="textarea"
@@ -50,13 +61,16 @@
         name: "Browser",
         data() {
             return {
+                newKey: {
+                    name: "",
+                    expiration: 100,
+                },
                 refreshKeysLoading: false,
                 keys: [],
                 showEditArea: false,
                 originValue: "",
                 currentValue: "",
                 currentKey: "",
-                newKey: "",
                 showAddNewKey: false,
                 currentEditKey: null,
             }
@@ -77,7 +91,7 @@
                 this.refreshKeysLoading = true;
                 try {
                     this.keys = await mainProcess.keys();
-                    setTimeout(() => this.refreshKeysLoading = false,500)
+                    setTimeout(() => this.refreshKeysLoading = false, 500)
                 } catch (e) {
                     console.log(e)
                     this.$message.error("Connect error");
@@ -88,16 +102,17 @@
                 }
             },
             addNewKey() {
-                if (!this.newKey) {
+                if (!this.newKey.name || this.newKey.expiration <= 0 ) {
                     this.$message({
                         type: "error",
                         message: "Please enter the key."
                     });
                     return;
                 }
-                mainProcess.set(this.newKey, "", 10000)
-                this.keys.push(this.newKey);
-                this.newKey = "";
+                mainProcess.set(this.newKey.name, "", this.newKey.expiration)
+                this.keys.push(this.newKey.name);
+                this.newKey.name = "";
+                this.showAddNewKey = false;
             },
             toggleShowAdd() {
                 this.showAddNewKey = !this.showAddNewKey;
